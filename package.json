@@ -1,0 +1,28 @@
+{
+  "name": "pcapjs",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./pcapng",
+  "scripts": {
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' nyc mocha",
+    "test:watch": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' mocha --watch",
+    "type-check": "tsc --noEmit",
+    "build": "npm run build:js",
+    "build:watch": "npm run build:js -- --watch",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/assert": "^1.5.1",
+    "@types/mocha": "^8.0.2",
+    "@types/node": "^14.0.27",
+    "mocha": "^8.1.1",
+    "nyc": "^15.1.0",
+    "ts-loader": "^8.0.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  },
+  "files": ["lib/**/*"]
+}

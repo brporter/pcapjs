@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES3",
+    "module": "commonjs",
+    "lib": ["DOM", "ES2015"],
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./lib",
+    "esModuleInterop": true,
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}
