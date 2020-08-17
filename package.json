@@ -1,7 +1,7 @@
 {
   "name": "pcapjs",
   "version": "0.0.1",
-  "description": "",
+  "description": "A pcapng parsing library.",
   "main": "./pcapng",
   "scripts": {
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' nyc mocha",
