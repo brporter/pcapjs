@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import * as fs from "fs";
 import * as packet from "./pcapng"
+import * as analyzers from "./analyzers/ethernet"
 
 describe("Parser Utility Methods", () => {
     it("should reverse the bytes of whatever 32-bit number is passed in", () => {
@@ -470,7 +471,8 @@ describe("Packet Parsing", () => {
                 [1, "Comment"],
                 [2, "Hardware"],
                 [3, "Operating System"],
-                [4, "Application"]
+                [4, "Application"],
+                [5, "Unknown Block Type / Code Combination"]
             ])],
             [packet.BlockType.InterfaceDescription, new Map<number, String>([
                 [1, "Comment"],
@@ -521,7 +523,6 @@ describe("Packet Parsing", () => {
 
         assert.strictEqual(capture.list.length, 1, "parsed capture had an incorrect number of sections");
 
-        /*
         capture.list.forEach( e => {
             console.log(`Section has ${e.list.length} blocks.`);
             e.block.options.forEach( e => {
@@ -535,8 +536,17 @@ describe("Packet Parsing", () => {
                 e.options.forEach( e => {
                     console.log(`  Block has option '${packet.Parser.optionCodeToName(e.code, blockType)} (${e.code})' with value '${e.toString()}'`);
                 })
+
+                if (blockType == packet.BlockType.EnhancedPacket) {
+                    const p = new analyzers.EthernetParser();
+                    const result = p.parse(e.blockBytes);
+                    
+                    const destString = result.getResult().destination.reduce( (a, v) => a += "-" + v.toString(16), "").substr(1, 17);
+                    const srcString = result.getResult().source.reduce( (a, v) => a += "-" + v.toString(16), "").substr(1, 17);
+
+                    console.log(`    Block has destination of '${destString}' and source of '${srcString}'`);
+                }
             });
         });
-        */
     });
 });
