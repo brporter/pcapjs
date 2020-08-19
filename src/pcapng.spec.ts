@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import * as fs from "fs";
 import * as packet from "./pcapng"
-import * as analyzers from "./analyzers/ethernet"
+import * as analyzers from "./protocols/ethernet"
 
 describe("Parser Utility Methods", () => {
     it("should reverse the bytes of whatever 32-bit number is passed in", () => {
@@ -541,10 +541,13 @@ describe("Packet Parsing", () => {
                     const p = new analyzers.EthernetParser();
                     const result = p.parse(e.blockBytes);
                     
-                    const destString = result.getResult().destination.reduce( (a, v) => a += "-" + v.toString(16), "").substr(1, 17);
-                    const srcString = result.getResult().source.reduce( (a, v) => a += "-" + v.toString(16), "").substr(1, 17);
+                    const destString = result.destination.reduce( (a, v) => a += "-" + v.toString(16), "").substr(1, 17);
+                    const srcString = result.source.reduce( (a, v) => a += "-" + v.toString(16), "").substr(1, 17);
 
                     console.log(`    Block has destination of '${destString}' and source of '${srcString}'`);
+                    const ip = result.next();
+
+                    console.log(`        Packet has destination of '${ip.destinationAddress}' and source of '${ip.sourceAddress}'`);
                 }
             });
         });

@@ -1,5 +1,6 @@
-import { IParser, IParserResult } from './parsers'
+import { IParser } from './parsers'
 import { type } from 'os';
+import { IPv4Packet, IPv4Parser } from './ip';
 
 export enum EtherType {
     Unknown = 0xFFFF,
@@ -60,7 +61,7 @@ export enum EtherType {
     RedundancyTag = 0xF1C1
 }
 
- export class EthernetFrame implements IParserResult<EthernetFrame> {
+export class EthernetFrame {
     readonly destination : Uint8Array;
     readonly source : Uint8Array;
     readonly vlanTag : Uint8Array;
@@ -75,11 +76,13 @@ export enum EtherType {
         this.payload = payload;
     }
 
-    getResult() : EthernetFrame { return this; }
+    next() : IPv4Packet {
+        return new IPv4Parser().parse(this.payload);
+    }
 }
 
 export class EthernetParser implements IParser<EthernetFrame> {
-    parse(data : Uint8Array): IParserResult<EthernetFrame> {
+    parse(data : Uint8Array): EthernetFrame {
         const view = new DataView(data.buffer);
         const destination = data.slice(0, 6);
         const source = data.slice(6, 12);
