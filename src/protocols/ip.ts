@@ -5,13 +5,13 @@ export class IPv4Parser implements IParser<IPv4Packet> {
         const view = new DataView(data.buffer);
 
         const version = view.getUint8(0) >>> 4;
-        const headerLength = view.getUint8(0) << 4 >>> 4;
+        const headerLength = view.getUint8(0) & 0x0F;
         const dscp = view.getUint8(1) >>> 2;
-        const ecn = view.getUint8(1) << 6 >>> 6;
+        const ecn = (view.getUint8(1) << 2 & 0x0F) >> 2;
         const totalLength = view.getUint16(2, false);
         const identification = view.getUint16(4, false);
         const flags = view.getUint8(6) >>> 5;
-        const fragmentOffset = view.getUint16(6, false) << 2 >>> 2;
+        const fragmentOffset = (view.getUint16(6, false) << 3 & 0xFFFF) >>> 3;
         const ttl = view.getUint8(8);
         const protocol = view.getUint8(9);
         const headerChecksum = view.getUint16(10, false);

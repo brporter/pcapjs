@@ -547,7 +547,7 @@ describe("Packet Parsing", () => {
                     console.log(`    Block has destination of '${destString}' and source of '${srcString}'`);
                     const ip = result.next();
 
-                    console.log(`        Packet has destination of '${ip.destinationAddress}' and source of '${ip.sourceAddress}'`);
+                    console.log(`        Packet is version '${ip.version}' and has destination of '${ip.destinationAddress}' and source of '${ip.sourceAddress}'`);
                 }
             });
         });
