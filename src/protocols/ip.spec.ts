@@ -21,6 +21,6 @@ describe('IPv4 Parsing', () => {
         assert.strictEqual(result.fragmentOffset, 0x0EFF, "parsed fragment offset was incorrect");
         assert.deepStrictEqual(result.sourceAddress, new Uint8Array([0x01, 0x02, 0x03, 0x04]), "parsed packet had incorrect source address");
         assert.deepStrictEqual(result.destinationAddress, new Uint8Array([0x05, 0x06, 0x07, 0x08]), "parsed packet had incorrect destination address");
-        assert.deepStrictEqual(result.data, new Uint8Array([0xDE, 0xAD, 0xBE, 0xEF]), "parsed packet contained incorrect data");
+        assert.deepStrictEqual(result.payload, new Uint8Array([0xDE, 0xAD, 0xBE, 0xEF]), "parsed packet contained incorrect data");
     });
 });

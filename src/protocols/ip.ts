@@ -1,4 +1,4 @@
-import { IParser } from './parsers'
+import { IParser, IProtocolContainer } from './parsers'
 
 export class IPv4Parser implements IParser<IPv4Packet> {
     parse(data: Uint8Array): IPv4Packet {
@@ -24,7 +24,7 @@ export class IPv4Parser implements IParser<IPv4Packet> {
     }
 }
 
-export class IPv4Packet {
+export class IPv4Packet implements IProtocolContainer {
     readonly version : number;
     readonly headerLength : number;
     readonly dscp : number;
@@ -38,9 +38,9 @@ export class IPv4Packet {
     readonly headerChecksum : number;
     readonly sourceAddress : Uint8Array;
     readonly destinationAddress : Uint8Array;
-    readonly data : Uint8Array;
+    readonly payload : Uint8Array;
 
-    constructor(version : number, headerLength : number, dscp : number, ecn : number, totalLength : number, identification : number, flags : number, fragmentOffset : number, ttl : number, protocol : number, headerChecksum : number, sourceAddress : Uint8Array, destinationAddress : Uint8Array, data : Uint8Array) {
+    constructor(version : number, headerLength : number, dscp : number, ecn : number, totalLength : number, identification : number, flags : number, fragmentOffset : number, ttl : number, protocol : number, headerChecksum : number, sourceAddress : Uint8Array, destinationAddress : Uint8Array, payload : Uint8Array) {
         this.version = version;
         this.headerLength = headerLength;
         this.dscp = dscp;
@@ -54,6 +54,6 @@ export class IPv4Packet {
         this.headerChecksum = headerChecksum;
         this.sourceAddress = sourceAddress;
         this.destinationAddress = destinationAddress;
-        this.data = data;
+        this.payload = payload;
     }
 }

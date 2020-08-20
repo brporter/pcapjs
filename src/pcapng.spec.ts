@@ -2,6 +2,8 @@ import * as assert from "assert";
 import * as fs from "fs";
 import * as packet from "./pcapng"
 import * as analyzers from "./protocols/ethernet"
+import { PayloadProtocol } from "./protocols/parsers";
+import { IPv4Parser } from "./protocols/ip";
 
 describe("Parser Utility Methods", () => {
     it("should reverse the bytes of whatever 32-bit number is passed in", () => {
@@ -545,9 +547,12 @@ describe("Packet Parsing", () => {
                     const srcString = result.source.reduce( (a, v) => a += "-" + v.toString(16), "").substr(1, 17);
 
                     console.log(`    Block has destination of '${destString}' and source of '${srcString}'`);
-                    const ip = result.next();
 
-                    console.log(`        Packet is version '${ip.version}' and has destination of '${ip.destinationAddress}' and source of '${ip.sourceAddress}'`);
+                    if (result.protocol == PayloadProtocol.IPv4)
+                    {
+                        const ip = new IPv4Parser().parse(result.payload);
+                        console.log(`        Packet is version '${ip.version}' and has destination of '${ip.destinationAddress}' and source of '${ip.sourceAddress}'`);
+                    }
                 }
             });
         });

@@ -1,3 +1,68 @@
 export interface IParser<T> {
     parse(data : Uint8Array) : T
 }
+
+export interface IProtocolContainer {
+    readonly payload : Uint8Array;
+    readonly protocol : PayloadProtocol;
+}
+
+export enum PayloadProtocol {
+    Unknown = 0,
+    IPv4 = 1,
+    ARP,
+    WakeOnLAN,
+    AVTP,
+    IETFTRILLProtocol,
+    StreamReservationProtocol,
+    DECMOPRC,
+    DECnetPhaseIV,
+    DNARouting,
+    DECLAT,
+    RARP,
+    AppleTalk,
+    AppleTalkAddressResolutionProtocol,
+    IEEE8021Q,
+    SLPP,
+    VLACP,
+    IPX,
+    QNXQnet,
+    IPv6,
+    EthernetFlowControl,
+    LACP,
+    CobraNet,
+    MPLSunicast,
+    MPLSmulticast,
+    PPPoEDiscoveryStage,
+    PPPoESessionStage,
+    HomePlug10MME,
+    IEEE8021X,
+    PROFINETProtocol,
+    SCSIoverEthernet,
+    ATAoverEthernet,
+    EtherCATProtocol,
+    ServiceVLANTagIdentifier,
+    EthernetPowerlink,
+    GOOSE,
+    GSE,
+    SV,
+    MikroTikRoMON,
+    LinkLayerDiscoveryProtocol,
+    SERCOSIII,
+    WSMP,
+    MediaRedundancyProtocol,
+    MACsecurity,
+    ProviderBackboneBridges,
+    PrecisionTimeProtocol,
+    NCSI,
+    ParallelRedundancyProtocol,
+    IEEE8021agConnectivityFaultManagement,
+    FibreChanneloverEthernet,
+    FCoEInitializationProtocol,
+    RDMAoverConvergedEthernet,
+    TTEthernetProtocolControlFrame,
+    HSR,
+    EthernetConfigurationTestingProtocol,
+    IEEE8021QDoubleTagging,
+    RedundancyTag
+}

@@ -1,12 +1,12 @@
-import { IParser } from './parsers'
+import { IParser, IProtocolContainer, PayloadProtocol } from './parsers'
 import { type } from 'os';
 import { IPv4Packet, IPv4Parser } from './ip';
 
-export enum EtherType {
+enum EtherType {
     Unknown = 0xFFFF,
     IPv4 = 0x0800,
     ARP = 0x0806,
-    WakeonLAN = 0x0842,
+    WakeOnLAN = 0x0842,
     AVTP = 0x22F0,
     IETFTRILLProtocol = 0x22F3,
     StreamReservationProtocol = 0x22EA,
@@ -22,7 +22,7 @@ export enum EtherType {
     IPX=0x8137,
     QNXQnet = 0x8204,
     IPv6 = 0x86DD,
-    Ethernetflowcontrol = 0x8808,
+    EthernetFlowControl = 0x8808,
     LACP = 0x8809,
     CobraNet = 0x8819,
     MPLSunicast = 0x8847,
@@ -35,7 +35,7 @@ export enum EtherType {
     SCSIoverEthernet = 0x889A,
     ATAoverEthernet = 0x88A2,
     EtherCATProtocol = 0x88A4,
-    ServiceVLANtagidentifier = 0x88A8,
+    ServiceVLANTagIdentifier = 0x88A8,
     EthernetPowerlink = 0x88AB,
     GOOSE = 0x88B8,
     GSE = 0x88B9,
@@ -61,23 +61,80 @@ export enum EtherType {
     RedundancyTag = 0xF1C1
 }
 
-export class EthernetFrame {
+const ProtocolTypeMap = new Map([
+    [EtherType.Unknown , PayloadProtocol.Unknown ],
+    [EtherType.IPv4 , PayloadProtocol.IPv4 ],
+    [EtherType.ARP , PayloadProtocol.ARP ],
+    [EtherType.WakeOnLAN , PayloadProtocol.WakeOnLAN],
+    [EtherType.AVTP , PayloadProtocol.AVTP ],
+    [EtherType.IETFTRILLProtocol , PayloadProtocol.IETFTRILLProtocol ],
+    [EtherType.StreamReservationProtocol , PayloadProtocol.StreamReservationProtocol ],
+    [EtherType.DECMOPRC , PayloadProtocol.DECMOPRC ],
+    [EtherType.DECnetPhaseIV, PayloadProtocol.DECnetPhaseIV],
+    [EtherType.DNARouting, PayloadProtocol.DNARouting ],
+    [EtherType.DECLAT , PayloadProtocol.DECLAT ],
+    [EtherType.RARP , PayloadProtocol.RARP ],
+    [EtherType.AppleTalk , PayloadProtocol.AppleTalk ],
+    [EtherType.AppleTalkAddressResolutionProtocol , PayloadProtocol.AppleTalkAddressResolutionProtocol ],
+    [EtherType.IEEE8021Q , PayloadProtocol.IEEE8021Q ],
+    [EtherType.SLPP , PayloadProtocol.SLPP ],
+    [EtherType.VLACP , PayloadProtocol.VLACP ],
+    [EtherType.IPX, PayloadProtocol.IPX],
+    [EtherType.QNXQnet , PayloadProtocol.QNXQnet ],
+    [EtherType.IPv6 , PayloadProtocol.IPv6 ],
+    [EtherType.EthernetFlowControl , PayloadProtocol.EthernetFlowControl ],
+    [EtherType.LACP , PayloadProtocol.LACP ],
+    [EtherType.CobraNet , PayloadProtocol.CobraNet ],
+    [EtherType.MPLSunicast , PayloadProtocol.MPLSunicast ],
+    [EtherType.MPLSmulticast , PayloadProtocol.MPLSmulticast ],
+    [EtherType.PPPoEDiscoveryStage , PayloadProtocol.PPPoEDiscoveryStage ],
+    [EtherType.PPPoESessionStage , PayloadProtocol.PPPoESessionStage ],
+    [EtherType.HomePlug10MME , PayloadProtocol.HomePlug10MME ],
+    [EtherType.IEEE8021X , PayloadProtocol.IEEE8021X ],
+    [EtherType.PROFINETProtocol , PayloadProtocol.PROFINETProtocol ],
+    [EtherType.SCSIoverEthernet , PayloadProtocol.SCSIoverEthernet ],
+    [EtherType.ATAoverEthernet , PayloadProtocol.ATAoverEthernet ],
+    [EtherType.EtherCATProtocol , PayloadProtocol.EtherCATProtocol ],
+    [EtherType.ServiceVLANTagIdentifier , PayloadProtocol.ServiceVLANTagIdentifier ],
+    [EtherType.EthernetPowerlink , PayloadProtocol.EthernetPowerlink ],
+    [EtherType.GOOSE , PayloadProtocol.GOOSE ],
+    [EtherType.GSE , PayloadProtocol.GSE ],
+    [EtherType.SV , PayloadProtocol.SV ],
+    [EtherType.MikroTikRoMON , PayloadProtocol.MikroTikRoMON ],
+    [EtherType.LinkLayerDiscoveryProtocol , PayloadProtocol.LinkLayerDiscoveryProtocol ],
+    [EtherType.SERCOSIII , PayloadProtocol.SERCOSIII ],
+    [EtherType.WSMP , PayloadProtocol.WSMP ],
+    [EtherType.MediaRedundancyProtocol , PayloadProtocol.MediaRedundancyProtocol ],
+    [EtherType.MACsecurity , PayloadProtocol.MACsecurity ],
+    [EtherType.ProviderBackboneBridges , PayloadProtocol.ProviderBackboneBridges ],
+    [EtherType.PrecisionTimeProtocol , PayloadProtocol.PrecisionTimeProtocol ],
+    [EtherType.NCSI , PayloadProtocol.NCSI ],
+    [EtherType.ParallelRedundancyProtocol , PayloadProtocol.ParallelRedundancyProtocol ],
+    [EtherType.IEEE8021agConnectivityFaultManagement , PayloadProtocol.IEEE8021agConnectivityFaultManagement ],
+    [EtherType.FibreChanneloverEthernet , PayloadProtocol.FibreChanneloverEthernet ],
+    [EtherType.FCoEInitializationProtocol , PayloadProtocol.FCoEInitializationProtocol ],
+    [EtherType.RDMAoverConvergedEthernet , PayloadProtocol.RDMAoverConvergedEthernet ],
+    [EtherType.TTEthernetProtocolControlFrame , PayloadProtocol.TTEthernetProtocolControlFrame ],
+    [EtherType.HSR , PayloadProtocol.HSR ],
+    [EtherType.EthernetConfigurationTestingProtocol , PayloadProtocol.EthernetConfigurationTestingProtocol ],
+    [EtherType.IEEE8021QDoubleTagging , PayloadProtocol.IEEE8021QDoubleTagging ],
+    [EtherType.RedundancyTag, PayloadProtocol.RedundancyTag],
+])
+
+export class EthernetFrame implements IProtocolContainer {
     readonly destination : Uint8Array;
     readonly source : Uint8Array;
     readonly vlanTag : Uint8Array;
-    readonly etherType : EtherType;
     readonly payload : Uint8Array;
+    readonly protocol : PayloadProtocol;
 
-    constructor(destination : Uint8Array, source : Uint8Array, vlanTag : Uint8Array, type : EtherType, payload : Uint8Array) {
+    constructor(destination : Uint8Array, source : Uint8Array, vlanTag : Uint8Array, protocol : PayloadProtocol, payload : Uint8Array) {
         this.destination = destination;
         this.source = source;
         this.vlanTag = vlanTag;
-        this.etherType = type;
         this.payload = payload;
-    }
 
-    next() : IPv4Packet {
-        return new IPv4Parser().parse(this.payload);
+        this.protocol = protocol
     }
 }
 
@@ -100,7 +157,7 @@ export class EthernetParser implements IParser<EthernetFrame> {
             // if the ethertype field indicates VLAN tagging, decode the VLAN tag
             determinedType = <EtherType>rawType;
 
-            if (determinedType == EtherType.IEEE8021Q || determinedType == EtherType.ServiceVLANtagidentifier) {
+            if (determinedType == EtherType.IEEE8021Q || determinedType == EtherType.ServiceVLANTagIdentifier) {
                 vlanTag.set(data.slice(14, 16));
                 offset = 16;
             }
@@ -108,6 +165,11 @@ export class EthernetParser implements IParser<EthernetFrame> {
 
         payload = data.slice(offset, data.length);
 
-        return new EthernetFrame(destination, source, vlanTag, determinedType, payload ?? new Uint8Array(0));
+        return new EthernetFrame(
+            destination, 
+            source, 
+            vlanTag, 
+            ProtocolTypeMap.get(determinedType) ?? PayloadProtocol.Unknown, 
+            payload ?? new Uint8Array(0));
     }
 }
