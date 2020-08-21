@@ -1,0 +1,18 @@
+{
+    "fields": [
+        { "name": "version", "length": 4 },
+        { "name": "ihl", "length": 4, "type": "length", "factor": 4},
+        { "name": "tos", "length": 8 },
+        { "name": "totalLength", "length": 16, "type": "length", "factor": 1 },
+        { "name": "identification", "length": 16 },
+        { "name": "flags", "length": 3 },
+        { "name": "fragmentOffset", "length": 13 },
+        { "name": "ttl", "length": 16 },
+        { "name": "protocol", "length": 16 },
+        { "name": "headerChecksum", "length": 32 },
+        { "name": "sourceAddress", "length": 64 },
+        { "name": "destinationAddress", "length": 64 },
+        { "name": "options", "lengthExpression": "this.ihl > 5 ? (this.ihl * 4 - 20) : 0" },
+        { "name": "payload", "lengthExpression": "this.totalLength - (this.ihl * 4)" }
+    ]
+}
