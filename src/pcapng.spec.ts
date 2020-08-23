@@ -526,17 +526,17 @@ describe("Packet Parsing", () => {
         assert.strictEqual(capture.list.length, 1, "parsed capture had an incorrect number of sections");
 
         capture.list.forEach( e => {
-            console.log(`Section has ${e.list.length} blocks.`);
+            //console.log(`Section has ${e.list.length} blocks.`);
             e.block.options.forEach( e => {
-                console.log(`  Section Header Block has option '${packet.Parser.optionCodeToName(e.code, packet.BlockType.SectionHeader)} (${e.code})' with value '${e.toString()}'`);
+                //console.log(`  Section Header Block has option '${packet.Parser.optionCodeToName(e.code, packet.BlockType.SectionHeader)} (${e.code})' with value '${e.toString()}'`);
             })
 
             e.list.forEach( e => {
-                console.log(`Block is of type ${packet.Parser.blockTypeToName(e.blockType)}`)
+                //console.log(`Block is of type ${packet.Parser.blockTypeToName(e.blockType)}`)
                 let blockType = e.blockType;
 
                 e.options.forEach( e => {
-                    console.log(`  Block has option '${packet.Parser.optionCodeToName(e.code, blockType)} (${e.code})' with value '${e.toString()}'`);
+                    //console.log(`  Block has option '${packet.Parser.optionCodeToName(e.code, blockType)} (${e.code})' with value '${e.toString()}'`);
                 })
 
                 if (blockType == packet.BlockType.EnhancedPacket) {
@@ -546,12 +546,12 @@ describe("Packet Parsing", () => {
                     const destString = result.destination.reduce( (a, v) => a += "-" + v.toString(16), "").substr(1, 17);
                     const srcString = result.source.reduce( (a, v) => a += "-" + v.toString(16), "").substr(1, 17);
 
-                    console.log(`    Block has destination of '${destString}' and source of '${srcString}'`);
+                    //console.log(`    Block has destination of '${destString}' and source of '${srcString}'`);
 
                     if (result.protocol == PayloadProtocol.IPv4)
                     {
                         const ip = new IPv4Parser().parse(result.payload);
-                        console.log(`        Packet is version '${ip.version}' and has destination of '${ip.destinationAddress}' and source of '${ip.sourceAddress}'`);
+                        //console.log(`        Packet is version '${ip.version}' and has destination of '${ip.destinationAddress}' and source of '${ip.sourceAddress}'`);
                     }
                 }
             });
